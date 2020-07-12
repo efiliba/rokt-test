@@ -12,7 +12,11 @@ const App = () => {
     repositories: []
   });
 
+  const [loading, setLoading] = useState(false);
+
   const handleSearch = async search => {
+    setLoading(true);
+
     const { error, repositoryCount = 0, repositories = [] } = await repositoriesByStars(search, pageSize);
 
     let message = error || (
@@ -22,17 +26,18 @@ const App = () => {
     );
 
     setRepos({ message, repositoryCount, repositories });
+    setLoading(false);
   };
 
   return (
-    <div>
+    <div className={loading ? "loading" : ""}>
       <Head>
         <title>Rokt Test</title>
-        <link rel='icon' href='/favicon.ico' />
+        <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className='container'>
-        <div className='card'>
+      <div className="container">
+        <div className="card">
           <Search autoFocus onSearch={handleSearch} />
         </div>
       </div>
@@ -56,6 +61,33 @@ const App = () => {
           font-size: 1.6rem;
         }
 
+        .loading::after {
+          content: '';
+          display: block;
+          position: absolute;
+          left: 48%;
+          top: 40%;
+          width: 40px;
+          height: 40px;
+          border-style: solid;
+          border-color: black;
+          border-top-color: transparent;
+          border-width:  4px;
+          border-radius: 50%;
+          -webkit-animation: spin .8s linear infinite;
+          animation: spin .8s linear infinite;
+        }
+
+        @-webkit-keyframes spin {
+          from { -webkit-transform: rotate(0deg); }
+          to { -webkit-transform: rotate(360deg); }
+        }
+        
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        
         .repos-message {
           color: red;
           padding: 1rem;
